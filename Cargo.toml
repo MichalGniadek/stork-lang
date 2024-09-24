@@ -1,0 +1,22 @@
+[package]
+name = "stork-script"
+edition.workspace = true
+
+[workspace]
+members = ["stork-script-bevy", "stork-script-core"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+
+[workspace.dependencies]
+stork-script-core = { path = "./stork-script-core" }
+
+[dev-dependencies]
+stork-script-core.workspace = true
+bevy = { git = "https://github.com/bevyengine/bevy" }
+
+[[example]]
+name = "example"
+path = "examples/example.rs"

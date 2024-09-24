@@ -91,6 +91,7 @@ pub fn new_module(type_registry: &TypeRegistry) -> Module {
                 .short_path()
                 .to_string(),
         );
+
         if let Some(inner) = resolve_type_info(registration.type_info()) {
             let from_ecs = type_registry
                 .get_type_data::<ReflectComponent>(registration.type_id())
@@ -129,10 +130,10 @@ fn resolve_type_info(type_info: &TypeInfo) -> Option<InnerResolvedType> {
                 .collect(),
         },
         TypeInfo::Tuple(tuple) if tuple.field_len() == 0 => InnerResolvedType::Unit,
-        TypeInfo::Value(info) if info.is::<()>() => InnerResolvedType::Unit,
-        TypeInfo::Value(info) if info.is::<f32>() => InnerResolvedType::F32,
-        TypeInfo::Value(info) if info.is::<bool>() => InnerResolvedType::Bool,
-        TypeInfo::Value(info)
+        TypeInfo::Opaque(info) if info.is::<()>() => InnerResolvedType::Unit,
+        TypeInfo::Opaque(info) if info.is::<f32>() => InnerResolvedType::F32,
+        TypeInfo::Opaque(info) if info.is::<bool>() => InnerResolvedType::Bool,
+        TypeInfo::Opaque(info)
             if info.is::<u8>()
                 || info.is::<u16>()
                 || info.is::<u32>()

@@ -1,0 +1,13 @@
+[package]
+name = "stork-script-bevy"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+bevy_ecs = { git = "https://github.com/bevyengine/bevy", features = [
+    "bevy_reflect",
+] }
+bevy_hierarchy = { git = "https://github.com/bevyengine/bevy" }
+bevy_reflect = { git = "https://github.com/bevyengine/bevy", features = [
+    "functions",
+] }

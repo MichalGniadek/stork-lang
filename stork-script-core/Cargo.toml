@@ -1,7 +1,7 @@
 [package]
-name = "stork-script"
-version = "0.1.0"
-edition = "2021"
+name = "stork-script-core"
+version.workspace = true
+edition.workspace = true
 
 [dependencies]
 anyhow = "1.0.89"
@@ -19,6 +19,3 @@ itertools = "0.12.1"
 la-arena = "0.3.1"
 logos = "0.14.0"
 rowan = "0.15.15"
-
-[dev-dependencies]
-# bevy = { git = "https://github.com/bevyengine/bevy" }
