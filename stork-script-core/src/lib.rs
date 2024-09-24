@@ -1,7 +1,5 @@
 #[path = "ast/ast.rs"]
 pub mod ast;
-#[path = "bevy/bevy.rs"]
-pub mod bevy;
 #[path = "cst/cst.rs"]
 pub mod cst;
 pub mod hir;

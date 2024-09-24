@@ -95,7 +95,7 @@ impl ResolveCtx<'_> {
                         .collect::<Option<_>>()?;
                     InnerResolvedType::Struct { fields }
                 }
-                Node::BuiltinType { r#type, .. } | Node::BuiltinFunction { r#type, .. } => {
+                Node::Builtin { r#type, .. } => {
                     return Some(r#type.clone());
                 }
                 Node::Expr(expr) => return self.expr(expr, node),

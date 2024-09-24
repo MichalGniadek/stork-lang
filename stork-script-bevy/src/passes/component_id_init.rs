@@ -1,11 +1,8 @@
 use crate::{
-    bevy::vm::{
-        vm_module_index::{ComponentIdMap, VMCache, VariableMap},
-        StorkValue,
-    },
-    hir::*,
-    module_index::ModuleCollection,
+    vm_module_index::{ComponentIdMap, VMCache, VariableMap},
+    BevyBuiltinData, StorkValue,
 };
+use stork_script_core::{hir::*, module_index::ModuleCollection};
 
 use bevy_ecs::{
     component::ComponentDescriptor,
@@ -63,29 +60,31 @@ impl WorldInitCtx<'_, '_, '_> {
                     .init_component_with_descriptor(ComponentDescriptor::new::<StorkValue>());
                 self.component_ids.set(node, id);
             }
-            Node::BuiltinType {
-                represents: type_id,
-                ..
-            } => {
-                // TODO: extend bevy so that you can get ComponentDescriptor from reflect/type_id
-                // and register component if it doesn't yet exist!
-                // ...ugh wait no, because to register it it would need to be also attached to
-                // type_id (so rust-generic-methods work) which would require adding a weird method
-                // that they probably won't like...
-                // Maybe something like `init_component_by_type_id`?
-                // or bevy#12332
-                if let Some(component_id) = self
-                    .world
-                    .components()
-                    .get_id(*type_id)
-                    .or(self.world.components().get_resource_id(*type_id))
-                {
-                    self.component_ids.set(node, component_id);
+            Node::Builtin { data, .. } => {
+                match data.downcast_ref::<BevyBuiltinData>().unwrap() {
+                    BevyBuiltinData::TypeId(type_id) => {
+                        // TODO: extend bevy so that you can get ComponentDescriptor from reflect/type_id
+                        // and register component if it doesn't yet exist!
+                        // ...ugh wait no, because to register it it would need to be also attached to
+                        // type_id (so rust-generic-methods work) which would require adding a weird method
+                        // that they probably won't like...
+                        // Maybe something like `init_component_by_type_id`?
+                        // or bevy#12332
+                        if let Some(component_id) = self
+                            .world
+                            .components()
+                            .get_id(*type_id)
+                            .or(self.world.components().get_resource_id(*type_id))
+                        {
+                            self.component_ids.set(node, component_id);
+                        }
+                    }
+                    BevyBuiltinData::Function(_) => {
+                        self.variables.set(node, node.destruct());
+                    }
                 }
             }
-            Node::BuiltinFunction { .. } => {
-                self.variables.set(node, node);
-            }
+
             Node::TypeIdent(_) | Node::Struct(_) | Node::Expr(_) | Node::Import(_) => {}
         }
     }

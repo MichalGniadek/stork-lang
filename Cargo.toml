@@ -3,6 +3,7 @@ name = "stork-script"
 edition.workspace = true
 
 [workspace]
+default-members = ["stork-script-bevy", "stork-script-core"]
 members = ["stork-script-bevy", "stork-script-core"]
 resolver = "2"
 
@@ -12,9 +13,14 @@ edition = "2021"
 
 [workspace.dependencies]
 stork-script-core = { path = "./stork-script-core" }
+stork-script-bevy = { path = "./stork-script-bevy" }
+expect-test = "1.5.0"
+anyhow = "1.0.89"
+itertools = "0.12.1"
 
 [dev-dependencies]
 stork-script-core.workspace = true
+stork-script-bevy.workspace = true
 bevy = { git = "https://github.com/bevyengine/bevy" }
 
 [[example]]

@@ -90,7 +90,7 @@ impl ResolveCtx<'_> {
                 }
             }
             Node::Expr(expr) => self.expr(expr, node),
-            Node::BuiltinType { .. } | Node::BuiltinFunction { .. } | Node::Import(_) => {}
+            Node::Builtin { .. } | Node::Import(_) => {}
         }
     }
 }

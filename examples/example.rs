@@ -27,7 +27,8 @@ fn setup(
 }
 mod scripts {
     use bevy::prelude::World;
-    use stork_script_core::{bevy::vm::vm_module_index::VMModuleIndex, module_index::Module};
+    use stork_script_bevy::vm_module_index::VMModuleIndex;
+    use stork_script_core::module_index::Module;
 
     pub fn setup(world: &mut World) {
         world.init_resource::<VMModuleIndex>();

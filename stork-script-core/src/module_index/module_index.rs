@@ -4,7 +4,6 @@ use std::collections::HashMap;
 
 use anyhow::anyhow;
 use ariadne::Source;
-use bevy_ecs::system::Resource;
 
 use crate::{
     hir::*,
@@ -14,7 +13,7 @@ use crate::{
 
 use cache::Cache;
 
-#[derive(Default, Resource)]
+#[derive(Default)]
 pub struct ModuleIndex {
     pub modules: ModuleCollection,
     pub cache: Cache,
@@ -36,13 +35,13 @@ impl ModuleIndex {
         self.cache = Cache::default();
 
         for module_id in self.modules.all_ids() {
-            passes::name_resolution::run(&mut self.cache, &mut self.modules, module_id)?;
+            passes::name_resolution::run(&mut self.cache, &self.modules, module_id)?;
         }
         for module_id in self.modules.all_ids() {
-            passes::type_resolution::run(&mut self.cache, &mut self.modules, module_id);
+            passes::type_resolution::run(&mut self.cache, &self.modules, module_id);
         }
         for module_id in self.modules.all_ids() {
-            passes::borrow_resolution::run(&mut self.cache, &mut self.modules, module_id);
+            passes::borrow_resolution::run(&mut self.cache, &self.modules, module_id);
         }
         Ok(())
     }
@@ -89,8 +88,8 @@ impl ModuleCollection {
 
     #[track_caller]
     pub fn get_node(&self, idx: impl Into<GlobalIdx>) -> &Node {
-        let (module_id, idx) = idx.into().destruct();
-        &self.modules[module_id].nodes[idx]
+        let idx = idx.into();
+        &self.modules[idx.module()].nodes[idx.idx()]
     }
 
     pub fn all_ids(&self) -> impl Iterator<Item = usize> {
@@ -166,8 +165,7 @@ impl Module {
                     Node::Component(typed_ident) | Node::Resource(typed_ident) => {
                         typed_ident.identifier()
                     }
-                    Node::BuiltinType { identifier, .. }
-                    | Node::BuiltinFunction { identifier, .. } => identifier.clone(),
+                    Node::Builtin { identifier, .. } => identifier.clone(),
                     Node::System(System {
                         ident: Some(ident), ..
                     }) => Identifier::Name(ident.clone()),

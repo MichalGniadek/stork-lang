@@ -1,13 +1,13 @@
 use std::sync::RwLock;
 
-use crate::bevy::vm::utils::UnsafeWorldCellParam;
-use crate::bevy::vm::vm_module_index::{
-    ComponentIdMap, QueryStateMap, SystemMap, VMCache, VMModuleIndex,
+use crate::utils::UnsafeWorldCellParam;
+use crate::vm_module_index::{ComponentIdMap, QueryStateMap, SystemMap, VMCache, VMModuleIndex};
+use stork_script_core::hir::*;
+use stork_script_core::module_index::cache::{Cache, EffectMap};
+use stork_script_core::module_index::ModuleCollection;
+use stork_script_core::passes::borrow_resolution::{
+    ComponentEffectKind, ResolvedEffect, ResolvedEffects,
 };
-use crate::hir::*;
-use crate::module_index::cache::{Cache, EffectMap};
-use crate::module_index::ModuleCollection;
-use crate::passes::borrow_resolution::{ComponentEffectKind, ResolvedEffect, ResolvedEffects};
 
 use bevy_ecs::component::ComponentId;
 use bevy_ecs::entity::Entity;
@@ -79,8 +79,7 @@ impl WorldInitCtx<'_, '_, '_> {
             | Node::Import(_)
             | Node::Resource(_)
             | Node::Component(_)
-            | Node::BuiltinType { .. }
-            | Node::BuiltinFunction { .. } => {}
+            | Node::Builtin { .. } => {}
         }
     }
 

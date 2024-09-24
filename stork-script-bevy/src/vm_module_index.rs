@@ -9,13 +9,12 @@ use bevy_ecs::{
     world::{unsafe_world_cell::UnsafeWorldCell, World},
 };
 
-use crate::{
-    bevy::vm::passes,
+use stork_script_core::{
     hir::{GlobalIdx, Identifier},
     module_index::{cache::GlobalMap, ModuleIndex},
 };
 
-use super::{stork_std, StorkValue};
+use super::{passes, stork_std, StorkValue};
 
 pub type ComponentIdMap = GlobalMap<ComponentId>;
 pub type VariableMap = GlobalMap<StorkValue>;

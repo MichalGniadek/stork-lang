@@ -81,8 +81,7 @@ impl PrintCtx<'_> {
                     .join("\n")
             ),
             Node::Expr(expr) => self.expr(expr, node, indent),
-            Node::BuiltinType { .. } => "BuiltinType".to_string(),
-            Node::BuiltinFunction { .. } => "BuiltinFunction".to_string(),
+            Node::Builtin { .. } => "Builtin".to_string(),
             Node::Import(import) => format!("Import {import:?}"),
         }
     }

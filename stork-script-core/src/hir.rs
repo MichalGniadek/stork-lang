@@ -1,15 +1,15 @@
 use crate::passes::type_resolution::ResolvedType;
 use crate::{module_index::ModuleID, passes::borrow_resolution::ResolvedEffects};
-use bevy_reflect::{func::DynamicFunction, Reflect};
 use rowan::TextRange;
-use std::{any::TypeId, fmt::Debug};
+use std::any::Any;
+use std::fmt::Debug;
 
 pub type Arena = la_arena::Arena<Node>;
 pub type Idx = la_arena::Idx<Node>;
 
 pub type SpanMap = la_arena::ArenaMap<Idx, TextRange>;
 
-#[derive(PartialEq, Eq, Hash, Clone, Copy, Reflect)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct GlobalIdx(ModuleID, u32);
 
 impl GlobalIdx {
@@ -17,8 +17,12 @@ impl GlobalIdx {
         Self(module, idx.into_raw().into_u32())
     }
 
-    pub fn from_index(module: ModuleID, i: usize) -> Self {
-        Self(module, i as u32)
+    pub fn construct((module, idx): (usize, u32)) -> Self {
+        Self(module, idx)
+    }
+
+    pub fn destruct(&self) -> (usize, u32) {
+        (self.0, self.1)
     }
 
     pub fn module(&self) -> ModuleID {
@@ -27,10 +31,6 @@ impl GlobalIdx {
 
     pub fn idx(&self) -> Idx {
         crate::hir::Idx::from_raw(la_arena::RawIdx::from_u32(self.1))
-    }
-
-    pub fn destruct(&self) -> (ModuleID, Idx) {
-        (self.module(), self.idx())
     }
 }
 
@@ -60,17 +60,11 @@ pub enum Node {
     TypeIdent(TypeIdent),
     Struct(StructType),
     Expr(Expr),
-    BuiltinType {
+    Builtin {
         identifier: Identifier,
         r#type: ResolvedType,
         effects: ResolvedEffects,
-        represents: TypeId,
-    },
-    BuiltinFunction {
-        identifier: Identifier,
-        r#type: ResolvedType,
-        effects: ResolvedEffects,
-        logic: DynamicFunction<'static>,
+        data: Box<dyn Any + Send + Sync>,
     },
 }
 

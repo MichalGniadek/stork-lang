@@ -53,9 +53,7 @@ impl ResolveCtx<'_> {
             | Node::Struct(_)
             | Node::Import(_) => ResolvedEffects::default(),
             Node::Expr(expr) => return self.expr(expr, node, ctx),
-            Node::BuiltinType { effects, .. } | Node::BuiltinFunction { effects, .. } => {
-                effects.clone()
-            }
+            Node::Builtin { effects, .. } => effects.clone(),
         })
     }
 
@@ -132,7 +130,7 @@ impl ResolveCtx<'_> {
                     AccessRequirement::Has => AccessRequirement::Read,
                     AccessRequirement::Structural => panic!("Invalid"),
                 };
-                return self.node((id, base), ctx);
+                self.node((id, base), ctx)
             }
             Expr::Assign { lvalue, expr } => join(
                 self.node((id, lvalue), AccessRequirement::Write),

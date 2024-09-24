@@ -4,6 +4,9 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+anyhow.workspace = true
+stork-script-core.workspace = true
+itertools.workspace = true
 bevy_ecs = { git = "https://github.com/bevyengine/bevy", features = [
     "bevy_reflect",
 ] }
@@ -11,3 +14,6 @@ bevy_hierarchy = { git = "https://github.com/bevyengine/bevy" }
 bevy_reflect = { git = "https://github.com/bevyengine/bevy", features = [
     "functions",
 ] }
+
+[dev-dependencies]
+expect-test.workspace = true

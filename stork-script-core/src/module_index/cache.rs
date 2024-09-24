@@ -57,27 +57,29 @@ impl<V> Default for DenseGlobalMap<V> {
 
 impl<V> DenseGlobalMap<V> {
     pub fn set(&mut self, idx: impl Into<GlobalIdx>, value: impl Into<V>) {
-        let (module_id, idx) = idx.into().destruct();
+        let idx = idx.into();
         self.0
-            .entry(module_id)
+            .entry(idx.module())
             .or_default()
-            .insert(idx, value.into());
+            .insert(idx.idx(), value.into());
     }
 
     pub fn get(&self, idx: impl Into<GlobalIdx>) -> Option<V>
     where
         V: Clone,
     {
-        let (module_id, idx) = idx.into().destruct();
+        let idx = idx.into();
         self.0
-            .get(&module_id)
-            .and_then(|module| module.get(idx))
+            .get(&idx.module())
+            .and_then(|module| module.get(idx.idx()))
             .cloned()
     }
 
     pub fn get_ref(&self, idx: impl Into<GlobalIdx>) -> Option<&V> {
-        let (module_id, idx) = idx.into().destruct();
-        self.0.get(&module_id).and_then(|module| module.get(idx))
+        let idx = idx.into();
+        self.0
+            .get(&idx.module())
+            .and_then(|module| module.get(idx.idx()))
     }
 }
 

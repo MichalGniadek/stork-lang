@@ -2,7 +2,7 @@ use bevy_ecs::prelude::{ReflectComponent, ReflectResource};
 use bevy_ecs::{component::Component, system::Resource};
 use bevy_ecs::{reflect::AppTypeRegistry, world::World};
 use bevy_reflect::Reflect;
-use stork_script_core::bevy::vm::vm_module_index::VMModuleIndex;
+use stork_script_bevy::vm_module_index::VMModuleIndex;
 use stork_script_core::module_index::Module;
 
 #[derive(Debug, Reflect, Component, Default, PartialEq)]

@@ -1,11 +1,13 @@
 use std::any::TypeId;
 
-use crate::hir::{Identifier, Node, Operator};
-use crate::module_index::Module;
-use crate::passes::type_resolution::{InnerResolvedType, ResolvedType};
 use bevy_ecs::reflect::{ReflectComponent, ReflectResource};
 use bevy_reflect::func::IntoFunction;
 use bevy_reflect::{TypeInfo, TypeRegistry};
+use stork_script_core::hir::{Identifier, Node, Operator};
+use stork_script_core::module_index::Module;
+use stork_script_core::passes::type_resolution::{InnerResolvedType, ResolvedType};
+
+use crate::BevyBuiltinData;
 
 pub fn new_module(type_registry: &TypeRegistry) -> Module {
     let mut module = Module {
@@ -75,11 +77,11 @@ pub fn new_module(type_registry: &TypeRegistry) -> Module {
             ret: Box::new(resolve_type(info.return_info().type_id(), type_registry).unwrap()),
         };
 
-        module.alloc_top_level(Node::BuiltinFunction {
+        module.alloc_top_level(Node::Builtin {
             identifier,
             r#type: r#type.into(),
             effects: Default::default(),
-            logic,
+            data: Box::new(BevyBuiltinData::Function(logic)),
         });
     }
 
@@ -100,11 +102,11 @@ pub fn new_module(type_registry: &TypeRegistry) -> Module {
                     .get_type_data::<ReflectResource>(registration.type_id())
                     .is_some();
 
-            module.alloc_top_level(Node::BuiltinType {
+            module.alloc_top_level(Node::Builtin {
                 identifier,
                 r#type: ResolvedType { inner, from_ecs },
                 effects: Default::default(),
-                represents: registration.type_id(),
+                data: Box::new(BevyBuiltinData::TypeId(registration.type_id())),
             });
         }
     }

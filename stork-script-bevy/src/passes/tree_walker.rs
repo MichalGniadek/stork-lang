@@ -1,18 +1,18 @@
 use std::any::TypeId;
 
 use crate::{
-    bevy::vm::{
-        vm_module_index::{ComponentIdMap, QueryStateMap, VMCache, VariableMap},
-        StorkValue,
-    },
+    vm_module_index::{ComponentIdMap, QueryStateMap, VMCache, VariableMap},
+    BevyBuiltinData, StorkValue,
+};
+use bevy_reflect::DynamicStruct;
+use itertools::Itertools;
+use stork_script_core::{
     hir::*,
     module_index::{
         cache::{Cache, NameMap},
         ModuleCollection,
     },
 };
-use bevy_reflect::DynamicStruct;
-use itertools::Itertools;
 
 use bevy_ecs::{
     component::{ComponentId, Components},
@@ -67,8 +67,7 @@ impl<'w> VM<'_, '_, 'w> {
             | Node::Component(_)
             | Node::TypeIdent(_)
             | Node::Struct(_)
-            | Node::BuiltinType { .. }
-            | Node::BuiltinFunction { .. }
+            | Node::Builtin { .. }
             | Node::Import(_) => {
                 unreachable!()
             }
@@ -92,12 +91,17 @@ impl<'w> VM<'_, '_, 'w> {
                 .unwrap(),
             Expr::Number(num) => (*num).into(),
             Expr::FunctionCall { function, args } => {
-                let f = self.node((id, function)).as_::<GlobalIdx>().unwrap();
+                let f = self.node((id, function)).as_::<(usize, u32)>().unwrap();
+                let f = GlobalIdx::construct(f);
 
-                if let Node::BuiltinFunction {
-                    identifier, logic, ..
+                if let Node::Builtin {
+                    identifier, data, ..
                 } = self.modules.get_node(f)
                 {
+                    let logic = data
+                        .downcast_ref::<BevyBuiltinData>()
+                        .unwrap()
+                        .unwrap_as_function();
                     let args_values = args
                         .iter()
                         .map(|expr| {

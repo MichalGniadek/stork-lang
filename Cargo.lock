@@ -3933,6 +3933,7 @@ name = "stork-script"
 version = "0.0.0"
 dependencies = [
  "bevy",
+ "stork-script-bevy",
  "stork-script-core",
 ]
 
@@ -3940,9 +3941,13 @@ dependencies = [
 name = "stork-script-bevy"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "bevy_ecs",
  "bevy_hierarchy",
  "bevy_reflect",
+ "expect-test",
+ "itertools 0.12.1",
+ "stork-script-core",
 ]
 
 [[package]]
@@ -3951,9 +3956,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "ariadne",
- "bevy_ecs",
- "bevy_hierarchy",
- "bevy_reflect",
  "derive_more",
  "expect-test",
  "itertools 0.12.1",
