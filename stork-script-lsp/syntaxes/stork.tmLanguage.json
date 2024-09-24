@@ -1,0 +1,102 @@
+{
+  "name": "Stork",
+  "scopeName": "source.stork",
+  "patterns": [
+    {
+      "name": "comment.line.number-sign.stork",
+      "match": "#.*$"
+    },
+    {
+      "comment": "comp, res declaration",
+      "match": "\\b(comp|res)\\s+(_?[A-Z][A-Za-z0-9_]*)\\b",
+      "captures": {
+        "1": {
+          "name": "keyword.declaration.stork"
+        },
+        "2": {
+          "name": "entity.name.type.stork"
+        }
+      }
+    },
+    {
+      "comment": "component/resource access",
+      "match": "(\\[)(_?[A-Z][A-Za-z0-9_]*)(\\])",
+      "captures": {
+        "1": {
+          "name": "punctuation.brackets.square.stork"
+        },
+        "2": {
+          "name": "entity.name.type.stork"
+        },
+        "3": {
+          "name": "punctuation.brackets.square.stork"
+        }
+      }
+    },
+    {
+      "name": "constant.numeric.decimal.stork",
+      "match": "(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"
+    },
+    {
+      "name": "keyword.control.stork",
+      "match": "\\b(query|if)\\b"
+    },
+    {
+      "name": "keyword.other.stork",
+      "match": "\\b(let|fn|sys|use)\\b"
+    },
+    {
+      "name": "keyword.declaration.stork",
+      "match": "\\b(comp|res)\\b"
+    },
+    {
+      "name": "keyword.operator.math.stork",
+      "match": "\\+|\\-|\\*|\\/"
+    },
+    {
+      "name": "keyword.operator.comparison.stork",
+      "match": "\\=\\="
+    },
+    {
+      "name": "keyword.operator.key-value.stork",
+      "match": "\\:"
+    },
+    {
+      "name": "keyword.operator.access.dot.stork",
+      "match": "\\."
+    },
+    {
+      "name": "keyword.operator.assignment.equal.stork",
+      "match": "\\="
+    },
+    {
+      "name": "punctuation.brackets.round.stork",
+      "match": "\\(|\\)"
+    },
+    {
+      "name": "punctuation.brackets.curly.stork",
+      "match": "\\{|\\}"
+    },
+    {
+      "name": "punctuation.brackets.square.stork",
+      "match": "\\[|\\]"
+    },
+    {
+      "name": "punctuation.brackets.semi.stork",
+      "match": "\\;"
+    },
+    {
+      "name": "punctuation.brackets.comma.stork",
+      "match": "\\,"
+    },
+    {
+      "include": "#variables"
+    }
+  ],
+  "repository": {
+    "variables": {
+      "name": "variable.other.stork",
+      "match": "[_a-zA-Z][0-9a-zA-Z_]*"
+    }
+  }
+}

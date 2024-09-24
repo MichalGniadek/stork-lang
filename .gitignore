@@ -1,0 +1,5 @@
+.git_old
+target
+stork-script-lsp/node_modules
+.DS_Store
+notes

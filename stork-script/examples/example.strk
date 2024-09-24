@@ -1,0 +1,34 @@
+use std
+
+comp Velocity: Vec3
+
+sys startup {
+    query entity {
+        if !entity[Camera2d] {
+            let entity[Velocity] = Vec3 {x: 5, y: 7, z: 0};
+        }
+    }
+}
+
+sys update {
+    let bounds = 200;
+    query entity {
+        if entity[Transform].translation.y >= 200 || entity[Transform].translation.y <= -200{
+            entity[Velocity].y *= -1;
+        }
+        if entity[Transform].translation.x >= 200 || entity[Transform].translation.x <= -200{
+            entity[Velocity].x *= -1;
+        }
+        
+        entity[Transform].translation.x += entity[Velocity].x;
+        entity[Transform].translation.y += entity[Velocity].y;
+    }
+}
+
+
+
+
+
+
+
+

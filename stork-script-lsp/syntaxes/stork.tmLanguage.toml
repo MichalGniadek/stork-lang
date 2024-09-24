@@ -1,0 +1,87 @@
+name = "Stork"
+scopeName = "source.stork"
+
+[[patterns]]
+name = "comment.line.number-sign.stork"
+match = '#.*$'
+
+[[patterns]]
+comment = "comp, res declaration"
+match = '\b(comp|res)\s+(_?[A-Z][A-Za-z0-9_]*)\b'
+[patterns.captures.1]
+name = "keyword.declaration.stork"
+[patterns.captures.2]
+name = "entity.name.type.stork"
+
+[[patterns]]
+comment = "component/resource access"
+match = '(\[)(_?[A-Z][A-Za-z0-9_]*)(\])'
+[patterns.captures.1]
+name = "punctuation.brackets.square.stork"
+[patterns.captures.2]
+name = "entity.name.type.stork"
+[patterns.captures.3]
+name = "punctuation.brackets.square.stork"
+
+[[patterns]]
+name = "constant.numeric.decimal.stork"
+match = '(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?'
+
+[[patterns]]
+name = "keyword.control.stork"
+match = '\b(query|if)\b'
+
+[[patterns]]
+name = "keyword.other.stork"
+match = '\b(let|fn|sys|use)\b'
+
+[[patterns]]
+name = "keyword.declaration.stork"
+match = '\b(comp|res)\b'
+
+[[patterns]]
+name = "keyword.operator.math.stork"
+match = '\+|\-|\*|\/'
+
+[[patterns]]
+name = "keyword.operator.comparison.stork"
+match = '\=\='
+
+[[patterns]]
+name = "keyword.operator.key-value.stork"
+match = '\:'
+
+[[patterns]]
+name = "keyword.operator.access.dot.stork"
+match = '\.'
+
+[[patterns]]
+name = "keyword.operator.assignment.equal.stork"
+match = '\='
+
+[[patterns]]
+name = "punctuation.brackets.round.stork"
+match = '\(|\)'
+
+[[patterns]]
+name = "punctuation.brackets.curly.stork"
+match = '\{|\}'
+
+[[patterns]]
+name = "punctuation.brackets.square.stork"
+match = '\[|\]'
+
+[[patterns]]
+name = "punctuation.brackets.semi.stork"
+match = '\;'
+
+[[patterns]]
+name = "punctuation.brackets.comma.stork"
+match = '\,'
+
+[[patterns]]
+include = "#variables"
+
+[repository.variables]
+name = "variable.other.stork"
+match = '[_a-zA-Z][0-9a-zA-Z_]*'

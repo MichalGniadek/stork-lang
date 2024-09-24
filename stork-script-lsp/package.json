@@ -1,0 +1,46 @@
+{
+  "name": "stork-script-lsp",
+  "displayName": "Stork Script",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "stork",
+        "aliases": [
+          "Stork",
+          "stork"
+        ],
+        "extensions": [
+          ".strk"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./assets/stork-delivery.png",
+          "dark": "./assets/stork-delivery.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "stork",
+        "scopeName": "source.stork",
+        "path": "./syntaxes/stork.tmLanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "watch": "node ./toml_to_json.js ./syntaxes/stork.tmLanguage.toml"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "toml": "^3.0.0"
+  }
+}
