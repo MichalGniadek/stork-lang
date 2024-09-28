@@ -1,5 +1,6 @@
 .git_old
 target
-stork-script-lsp/node_modules
+stork-script-vscode/node_modules
 .DS_Store
 notes
+stork-script-vscode/out

@@ -16,6 +16,11 @@ use bevy_reflect::{PartialReflect, ReflectFromPtr, ReflectPath, TypePath, TypeRe
 use super::passes::tree_walker::component_id_to_type_id;
 
 // TODO: I think it should be safe to go Arc -> UnsafeCell
+// or even maybe just box?
+// TODO: yeah so:
+// 1. Arc -> Box
+// 2. Remove the Clone derive
+// 3. Change variable map to have scopes and in the highest scope reference the global variables
 #[derive(Debug, Clone, TypePath, Resource, Component)]
 pub struct StorkValue(Arc<dyn PartialReflect>, Vec<String>);
 

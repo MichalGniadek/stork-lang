@@ -133,6 +133,8 @@ impl<'w> VM<'_, '_, 'w> {
                 let mut query = self.query_states.get_ref(node).unwrap().write().unwrap();
                 // SAFETY: I don't think this actually needs to be checked if I make sure that
                 // the components are not aliased later
+                // TODO: The queries don't access any components (they are Query<Entity>) but is this
+                // unsound with structural changes e.g. adding a component to an entity?
                 let iter = unsafe { query.iter_unchecked(self.world) };
 
                 for entity in iter {

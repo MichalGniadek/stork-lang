@@ -1,0 +1,11 @@
+[package]
+name = "stork-script-lsp"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+async-lsp = "0.2.0"
+async-std = "1.13.0"
+futures = "0.3.30"
+stork-script-core.workspace = true
+tower = "0.5.1"

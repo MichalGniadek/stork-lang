@@ -201,7 +201,7 @@ impl ResolveCtx<'_> {
                 .spans
                 .get(node.idx())
                 .cloned()
-                .unwrap_or_default()
+                .map_or_else(Default::default, |ptr| ptr.text_range())
                 .start()
                 .into(),
         )
@@ -215,7 +215,7 @@ impl ResolveCtx<'_> {
                 .spans
                 .get(node.idx())
                 .copied()
-                .unwrap_or_default()
+                .map_or_else(Default::default, |ptr| ptr.text_range())
                 .into(),
         ))
         .with_message(m)

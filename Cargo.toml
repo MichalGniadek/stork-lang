@@ -3,8 +3,8 @@ name = "stork-script"
 edition.workspace = true
 
 [workspace]
-default-members = ["stork-script-bevy", "stork-script-core"]
-members = ["stork-script-bevy", "stork-script-core"]
+default-members = ["stork-script-bevy", "stork-script-core", "stork-script-lsp"]
+members = ["stork-script-bevy", "stork-script-core", "stork-script-lsp"]
 resolver = "2"
 
 [workspace.package]

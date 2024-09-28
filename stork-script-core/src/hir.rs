@@ -1,13 +1,13 @@
+use crate::cst::{StorkLang, SyntaxNodePtr};
 use crate::passes::type_resolution::ResolvedType;
 use crate::{module_index::ModuleID, passes::borrow_resolution::ResolvedEffects};
-use rowan::TextRange;
 use std::any::Any;
 use std::fmt::Debug;
 
 pub type Arena = la_arena::Arena<Node>;
 pub type Idx = la_arena::Idx<Node>;
 
-pub type SpanMap = la_arena::ArenaMap<Idx, TextRange>;
+pub type SpanMap = la_arena::ArenaMap<Idx, SyntaxNodePtr>;
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct GlobalIdx(ModuleID, u32);
@@ -191,4 +191,14 @@ pub enum Operator {
     Not,
     Or,
     And,
+}
+
+pub trait AstNodeExt {
+    fn ptr(&self) -> SyntaxNodePtr;
+}
+
+impl<T: rowan::ast::AstNode<Language = StorkLang>> AstNodeExt for T {
+    fn ptr(&self) -> SyntaxNodePtr {
+        SyntaxNodePtr::new(self.syntax())
+    }
 }

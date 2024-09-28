@@ -1,7 +1,6 @@
 use ariadne::Source;
-use rowan::ast::AstNode;
-use rowan::TextRange;
 
+use crate::cst::SyntaxNodePtr;
 use crate::hir::*;
 use crate::module_index::{Module, ModuleID};
 use crate::report::{Report, ReportKind, Result};
@@ -45,7 +44,7 @@ struct LowerCtx {
 
 impl LowerCtx {
     fn item(&mut self, item: ast::Item) -> Option<Idx> {
-        let span = item.syntax().text_range();
+        let span = item.ptr();
         Some(match item {
             ast::Item::System(system) => return self.system(system),
             ast::Item::Resource(resource) => {
@@ -67,7 +66,7 @@ impl LowerCtx {
     }
 
     fn r#type(&mut self, r#type: ast::Type) -> Option<Idx> {
-        let span = r#type.syntax().text_range();
+        let span = r#type.ptr();
         Some(match r#type {
             ast::Type::IdentifierType(ident) => {
                 self.alloc(span, Node::TypeIdent(TypeIdent(ident.ident()?)))
@@ -86,7 +85,7 @@ impl LowerCtx {
         let block = self.expr(ast::Expr::Block(system.block()?));
 
         let id = self.nodes.alloc(Node::System(System {
-            // _span: system.syntax().text_range(),
+            // _span: system.ptr(),
             ident: system.ident(),
             block,
         }));
@@ -108,26 +107,23 @@ mod expr {
                 ast::Expr::BinaryExpr(binary_expr) => self.binary_expr(binary_expr),
                 ast::Expr::Literal(literal) => {
                     if let Some(ident) = literal.as_identifier() {
-                        self.alloc(
-                            literal.syntax().text_range(),
-                            Expr::Identifier(Identifier::Name(ident)),
-                        )
+                        self.alloc(literal.ptr(), Expr::Identifier(Identifier::Name(ident)))
                     } else if let Some(number) = literal.as_number() {
-                        self.alloc(literal.syntax().text_range(), Expr::Number(number))
+                        self.alloc(literal.ptr(), Expr::Number(number))
                     } else {
-                        self.alloc(literal.syntax().text_range(), Expr::Poison)
+                        self.alloc(literal.ptr(), Expr::Poison)
                     }
                 }
                 ast::Expr::Query(query) => {
                     let Some(entity) = query.entity() else {
-                        return self.alloc(query.syntax().text_range(), Expr::Poison);
+                        return self.alloc(query.ptr(), Expr::Poison);
                     };
                     let block = self.expr(query.block().map(ast::Expr::Block));
-                    self.alloc(query.syntax().text_range(), Expr::Query { entity, block })
+                    self.alloc(query.ptr(), Expr::Query { entity, block })
                 }
                 ast::Expr::Block(block) => self.block(block),
                 ast::Expr::ECSAccess(access) => {
-                    let span = access.syntax().text_range();
+                    let span = access.ptr();
                     let component = self.expr(access.component());
                     if let Some(entity) = access.entity() {
                         let entity = self.expr(entity);
@@ -143,39 +139,39 @@ mod expr {
                 }
                 // TODO: validate lvalue
                 ast::Expr::Let(r#let) => {
-                    let span = r#let.syntax().text_range();
+                    let span = r#let.ptr();
                     let lvalue = self.expr(r#let.lvalue());
                     let expr = self.expr(r#let.expr());
                     self.alloc(span, Expr::Let { lvalue, expr })
                 }
                 // TODO: validate del value
                 ast::Expr::Del(del) => {
-                    let span = del.syntax().text_range();
+                    let span = del.ptr();
                     let expr = self.expr(del.expr());
                     self.alloc(span, Expr::Del { expr })
                 }
                 ast::Expr::If(r#if) => {
-                    let span = r#if.syntax().text_range();
+                    let span = r#if.ptr();
                     let cond = self.expr(r#if.cond());
                     let expr = self.expr(r#if.expr());
                     let r#else = r#if.r#else().map(|e| self.expr(e));
                     self.alloc(span, Expr::If { cond, expr, r#else })
                 }
                 ast::Expr::While(r#while) => {
-                    let span = r#while.syntax().text_range();
+                    let span = r#while.ptr();
                     let cond = self.expr(r#while.cond());
                     let expr = self.expr(r#while.expr());
                     self.alloc(span, Expr::While { cond, expr })
                 }
                 ast::Expr::Call(call) => {
-                    let span = call.syntax().text_range();
+                    let span = call.ptr();
                     let function = self.expr(call.function());
                     let args = call.args().into_iter().map(|arg| self.expr(arg)).collect();
 
                     self.alloc(span, Expr::FunctionCall { function, args })
                 }
                 ast::Expr::Struct(r#struct) => {
-                    let span = r#struct.syntax().text_range();
+                    let span = r#struct.ptr();
                     let Some(ident) = r#struct.ident() else {
                         return self.alloc_expr_poison();
                     };
@@ -191,11 +187,11 @@ mod expr {
 
         fn block(&mut self, block: ast::Block) -> Idx {
             let exprs = block.exprs().map(|expr| self.expr(expr)).collect();
-            self.alloc(block.syntax().text_range(), Expr::Block(exprs))
+            self.alloc(block.ptr(), Expr::Block(exprs))
         }
 
         fn unary_expr(&mut self, unary_expr: ast::UnaryExpr) -> Idx {
-            let span = unary_expr.syntax().text_range();
+            let span = unary_expr.ptr();
             let Some(op) = unary_expr.op() else {
                 return self.alloc_expr_poison();
             };
@@ -206,7 +202,7 @@ mod expr {
             };
 
             let op = self.alloc(
-                op.text_range(),
+                unary_expr.ptr(),
                 Expr::Identifier(Identifier::Operator(op_ident)),
             );
 
@@ -219,7 +215,7 @@ mod expr {
         }
 
         fn binary_expr(&mut self, binary_expr: ast::BinaryExpr) -> Idx {
-            let span = binary_expr.syntax().text_range();
+            let span = binary_expr.ptr();
 
             let left = self.expr(binary_expr.left());
             let right = self.expr(binary_expr.right());
@@ -260,22 +256,22 @@ mod expr {
                     );
                 }
                 Token::PLUSEQ => {
-                    return self.op_assign(span, left, right, op.text_range(), Operator::Add);
+                    return self.op_assign(span, left, right, binary_expr.ptr(), Operator::Add);
                 }
                 Token::MINUSEQ => {
-                    return self.op_assign(span, left, right, op.text_range(), Operator::Sub);
+                    return self.op_assign(span, left, right, binary_expr.ptr(), Operator::Sub);
                 }
                 Token::STAREQ => {
-                    return self.op_assign(span, left, right, op.text_range(), Operator::Mul);
+                    return self.op_assign(span, left, right, binary_expr.ptr(), Operator::Mul);
                 }
                 Token::SLASHEQ => {
-                    return self.op_assign(span, left, right, op.text_range(), Operator::Div);
+                    return self.op_assign(span, left, right, binary_expr.ptr(), Operator::Div);
                 }
                 _ => unreachable!("Token shouldn't be parsed as an operator"),
             };
 
             let op = self.alloc(
-                op.text_range(),
+                binary_expr.ptr(),
                 Expr::Identifier(Identifier::Operator(op_kind)),
             );
 
@@ -289,10 +285,10 @@ mod expr {
 
         fn op_assign(
             &mut self,
-            span: TextRange,
+            span: SyntaxNodePtr,
             left: Idx,
             right: Idx,
-            op_span: TextRange,
+            op_span: SyntaxNodePtr,
             op: Operator,
         ) -> Idx {
             let function = self.alloc(op_span, Expr::Identifier(Identifier::Operator(op)));
@@ -317,7 +313,7 @@ mod expr {
 }
 
 impl LowerCtx {
-    fn alloc(&mut self, span: impl Into<TextRange>, expr: impl Into<Node>) -> Idx {
+    fn alloc(&mut self, span: impl Into<SyntaxNodePtr>, expr: impl Into<Node>) -> Idx {
         let idx = self.nodes.alloc(expr.into());
         self.spans.insert(idx, span.into());
         idx

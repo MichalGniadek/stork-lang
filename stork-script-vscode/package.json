@@ -1,5 +1,5 @@
 {
-  "name": "stork-script-lsp",
+  "name": "stork-script-vscode",
   "displayName": "Stork Script",
   "description": "",
   "version": "0.0.1",
@@ -9,6 +9,7 @@
   "categories": [
     "Programming Languages"
   ],
+  "main": "out/extension",
   "contributes": {
     "languages": [
       {
@@ -33,14 +34,33 @@
         "scopeName": "source.stork",
         "path": "./syntaxes/stork.tmLanguage.json"
       }
+    ],
+    "commands": [
+      {
+        "category": "Stork",
+        "command": "stork.restart-lsp",
+        "title": "Restart language server"
+      }
     ]
   },
   "scripts": {
-    "watch": "node ./toml_to_json.js ./syntaxes/stork.tmLanguage.toml"
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -b",
+    "watch": "tsc -b -w",
+    "watch-grammar": "node ./toml_to_json.js ./syntaxes/stork.tmLanguage.toml"
   },
   "dependencies": {
     "chokidar": "^4.0.0",
     "fs": "^0.0.1-security",
-    "toml": "^3.0.0"
+    "toml": "^3.0.0",
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.1",
+    "@types/node": "^18.14.6",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
   }
 }

@@ -626,6 +626,7 @@ enum ParsedBlock {
 }
 
 pub type SyntaxNode = rowan::SyntaxNode<StorkLang>;
+pub type SyntaxNodePtr = rowan::ast::SyntaxNodePtr<StorkLang>;
 pub type SyntaxToken = rowan::SyntaxToken<StorkLang>;
 pub type SyntaxElement = rowan::SyntaxElement<StorkLang>;
 
