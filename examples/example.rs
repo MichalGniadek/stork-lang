@@ -6,12 +6,15 @@ use bevy::{
 fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
-        .add_systems(Startup, (setup, scripts::setup).chain())
+        .add_systems(
+            Startup,
+            (scripts::compile, startup, scripts::startup).chain(),
+        )
         .add_systems(Update, scripts::update);
     app.run();
 }
 
-fn setup(
+fn startup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -30,7 +33,7 @@ mod scripts {
     use stork_script_bevy::vm_module_index::VMModuleIndex;
     use stork_script_core::module_index::Module;
 
-    pub fn setup(world: &mut World) {
+    pub fn compile(world: &mut World) {
         world.init_resource::<VMModuleIndex>();
         world.resource_scope::<VMModuleIndex, _>(|mut world, mut vm| {
             vm.index
@@ -44,7 +47,9 @@ mod scripts {
                 panic!("{err}");
             }
         });
+    }
 
+    pub fn startup(world: &mut World) {
         let system = world
             .resource::<VMModuleIndex>()
             .get_system_id("main", "startup");

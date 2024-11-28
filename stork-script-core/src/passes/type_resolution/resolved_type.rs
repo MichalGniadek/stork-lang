@@ -5,7 +5,7 @@ use itertools::Itertools;
 #[derive(Debug, Clone, Default)]
 pub struct ResolvedType {
     pub inner: InnerResolvedType,
-    pub from_ecs: bool,
+    pub component_or_resource: bool,
 }
 
 impl ResolvedType {
@@ -14,7 +14,7 @@ impl ResolvedType {
     }
 
     pub fn with_from_ecs(mut self) -> Self {
-        self.from_ecs = true;
+        self.component_or_resource = true;
         self
     }
 }

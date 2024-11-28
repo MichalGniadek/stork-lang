@@ -95,7 +95,7 @@ pub fn new_module(type_registry: &TypeRegistry) -> Module {
         );
 
         if let Some(inner) = resolve_type_info(registration.type_info()) {
-            let from_ecs = type_registry
+            let component_or_resource = type_registry
                 .get_type_data::<ReflectComponent>(registration.type_id())
                 .is_some()
                 || type_registry
@@ -104,7 +104,10 @@ pub fn new_module(type_registry: &TypeRegistry) -> Module {
 
             module.alloc_top_level(Node::Builtin {
                 identifier,
-                r#type: ResolvedType { inner, from_ecs },
+                r#type: ResolvedType {
+                    inner,
+                    component_or_resource,
+                },
                 effects: Default::default(),
                 data: Box::new(BevyBuiltinData::TypeId(registration.type_id())),
             });

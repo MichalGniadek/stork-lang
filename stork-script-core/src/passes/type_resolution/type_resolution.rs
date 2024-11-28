@@ -318,7 +318,7 @@ impl ResolveCtx<'_> {
 impl ResolveCtx<'_> {
     fn assert_truthy(&mut self, r#type: ResolvedType, node: impl Into<GlobalIdx>) {
         let node = node.into();
-        if r#type.inner != InnerResolvedType::Bool && !r#type.from_ecs {
+        if r#type.inner != InnerResolvedType::Bool && !r#type.component_or_resource {
             self.errors.push(
                 node.module(),
                 self.error(node)
@@ -349,7 +349,7 @@ impl ResolveCtx<'_> {
 
     fn assert_from_ecs(&mut self, r#type: &ResolvedType, node: impl Into<GlobalIdx>) {
         let node = node.into();
-        if !r#type.from_ecs {
+        if !r#type.component_or_resource {
             self.errors.push(
                 node.module(),
                 self.error(node)

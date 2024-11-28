@@ -118,11 +118,7 @@ impl<'w> VM<'_, '_, 'w> {
                         args = args.push_boxed(arg_value);
                     }
                     let ret = logic.call(args).unwrap();
-                    if ret.is_unit() {
-                        ().into()
-                    } else {
-                        StorkValue::from_box(ret.unwrap_owned())
-                    }
+                    StorkValue::from_box(ret.unwrap_owned())
                 } else {
                     // TODO: add args to variables
                     self.node(f)

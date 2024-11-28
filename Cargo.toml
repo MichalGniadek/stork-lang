@@ -26,3 +26,7 @@ bevy = { git = "https://github.com/bevyengine/bevy" }
 [[example]]
 name = "example"
 path = "examples/example.rs"
+
+[[example]]
+name = "testing"
+path = "examples/testing.rs"
